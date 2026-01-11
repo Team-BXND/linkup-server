@@ -5,6 +5,7 @@ import B1ND.linkUp.domain.post.dto.response.ReadPostsRes;
 import B1ND.linkUp.domain.post.entity.Posts;
 import B1ND.linkUp.domain.post.repository.PostsRepository;
 import B1ND.linkUp.global.common.APIResponse;
+import B1ND.linkUp.global.common.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,12 +20,10 @@ import java.util.List;
 public class PostsService {
     private final PostsRepository postsRepository;
 
-    public APIResponse<List<ReadPostsRes>> ReadPosts(int page, ReadPostsReq req) {
-        String sort_by = req.category().toString();
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, sort_by));
+    public APIResponse<PageResponse<List<ReadPostsRes>>> ReadPosts(int page, ReadPostsReq req) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, req.category().toString()));
         Page<Posts> postsPage = postsRepository.findAllByIsAcceptedTrue(pageable);
 
-        List<ReadPostsRes> response = ReadPostsRes.fromPage(postsPage);
-        return APIResponse.ok(response);
+        return APIResponse.ok(PageResponse.of(ReadPostsRes.fromPage(postsPage), postsPage));
     }
 }
