@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public record ReadPostsRes(
+public record ReadPostsResponse(
         Long id,
         String title,
         String author,
@@ -19,8 +19,8 @@ public record ReadPostsRes(
         int CommentCount,
         LocalDate createAt
 ) {
-    public static ReadPostsRes from(Posts posts) {
-        return new ReadPostsRes(
+    public static ReadPostsResponse from(Posts posts) {
+        return new ReadPostsResponse(
                 posts.getId(),
                 posts.getTitle(),
                 posts.getAuthor(),
@@ -33,9 +33,9 @@ public record ReadPostsRes(
         );
     }
 
-    public static List<ReadPostsRes> fromPage(Page<Posts> page) {
+    public static List<ReadPostsResponse> fromPage(Page<Posts> page) {
         return page.getContent().stream().map(
-                posts -> ReadPostsRes.from(posts)
+                posts -> ReadPostsResponse.from(posts)
         ).collect(Collectors.toList());
     }
 }

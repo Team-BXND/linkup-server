@@ -1,7 +1,7 @@
 package B1ND.linkUp.domain.post.service;
 
-import B1ND.linkUp.domain.post.dto.request.ReadPostsReq;
-import B1ND.linkUp.domain.post.dto.response.ReadPostsRes;
+import B1ND.linkUp.domain.post.dto.request.ReadPostsRequest;
+import B1ND.linkUp.domain.post.dto.response.ReadPostsResponse;
 import B1ND.linkUp.domain.post.entity.Posts;
 import B1ND.linkUp.domain.post.repository.PostsRepository;
 import B1ND.linkUp.global.common.APIResponse;
@@ -20,10 +20,10 @@ import java.util.List;
 public class PostsService {
     private final PostsRepository postsRepository;
 
-    public APIResponse<PageResponse<List<ReadPostsRes>>> ReadPosts(int page, ReadPostsReq req) {
+    public APIResponse<PageResponse<List<ReadPostsResponse>>> ReadPosts(int page, ReadPostsRequest req) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, req.category().toString()));
         Page<Posts> postsPage = postsRepository.findAllByIsAcceptedTrue(pageable);
 
-        return APIResponse.ok(PageResponse.of(ReadPostsRes.fromPage(postsPage), postsPage));
+        return APIResponse.ok(PageResponse.of(ReadPostsResponse.fromPage(postsPage), postsPage));
     }
 }

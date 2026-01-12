@@ -1,6 +1,6 @@
 package B1ND.linkUp.global.common;
 
-import B1ND.linkUp.domain.post.dto.response.ReadPostsRes;
+import B1ND.linkUp.domain.post.dto.response.ReadPostsResponse;
 import B1ND.linkUp.domain.post.entity.Posts;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +19,7 @@ public class PageResponse<T> {
     private boolean hasNext;
     private boolean hasPrevious;
 
-    public static PageResponse of(List<ReadPostsRes> content, Page<Posts> postsPage) {
+    public static PageResponse of(List<ReadPostsResponse> content, Page<Posts> postsPage) {
         return new PageResponse(
                 content,
                 postsPage.getNumber(),

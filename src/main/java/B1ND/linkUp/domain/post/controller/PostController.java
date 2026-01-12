@@ -1,7 +1,7 @@
 package B1ND.linkUp.domain.post.controller;
 
-import B1ND.linkUp.domain.post.dto.request.ReadPostsReq;
-import B1ND.linkUp.domain.post.dto.response.ReadPostsRes;
+import B1ND.linkUp.domain.post.dto.request.ReadPostsRequest;
+import B1ND.linkUp.domain.post.dto.response.ReadPostsResponse;
 import B1ND.linkUp.domain.post.service.PostsService;
 import B1ND.linkUp.global.common.APIResponse;
 import jakarta.validation.Valid;
@@ -21,9 +21,9 @@ public class PostController {
     private final PostsService postsService;
 
     @GetMapping
-    public APIResponse<List<ReadPostsRes>> ReadAll(
+    public APIResponse<List<ReadPostsResponse>> ReadAll(
             @RequestParam(defaultValue = "0") int page,
-            @Valid @RequestBody ReadPostsReq req) {
+            @Valid @RequestBody ReadPostsRequest req) {
         return postsService.ReadPosts(page, req);
     }
 }
