@@ -36,4 +36,8 @@ public class Posts {
 
     @OneToMany
     private List<PostsLike> like;
+
+    public int LikeCount() {
+        return like.size();
+    }
 }
