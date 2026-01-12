@@ -58,4 +58,14 @@ public class AuthController {
         MessageResponse res = authService.changePassword(request);
         return ResponseEntity.ok(APIResponse.ok(res));
     }
+
+    // 액세스 토큰 재발급
+    @PostMapping("/refresh")
+    public ResponseEntity<APIResponse<SignInResponse>> refreshToken(
+            @Valid @RequestBody RefreshTokenRequest request
+    ) {
+        SignInResponse res = authService.refreshToken(request);
+        return ResponseEntity.ok(APIResponse.ok(res));
+    }
+
 }
