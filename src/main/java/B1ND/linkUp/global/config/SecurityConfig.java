@@ -38,7 +38,8 @@ public class SecurityConfig {
                                     "/auth/signin",
                                     "/auth/pwchange/send",
                                     "/auth/pwchange/verify",
-                                    "/auth/pwchange/change"
+                                    "/auth/pwchange/change",
+                                    "/auth/refresh"
                             ).permitAll()
                             .anyRequest().authenticated()
                     )
