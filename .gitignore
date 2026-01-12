@@ -174,3 +174,7 @@ Temporary Items
 *.icloud
 
 .env
+
+.gradle/
+build/
+*.iml
