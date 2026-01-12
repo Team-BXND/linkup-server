@@ -96,4 +96,24 @@ public class AuthService {
             throw new CustomException(ErrorCode.INVALID_PASSWORD_FORMAT);
         }
     }
+
+    @Transactional(readOnly = true)
+    public SignInResponse refreshToken(RefreshTokenRequest request) {
+        String refreshToken = request.getRefreshToken();
+
+        if (!jwtTokenProvider.validateToken(refreshToken)) {
+            throw new CustomException(ErrorCode.INVALID_CREDENTIALS);
+        }
+
+        var authentication = jwtTokenProvider.getAuthentication(refreshToken);
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_CREDENTIALS));
+
+        String newAccessToken = jwtTokenProvider.createAccessToken(user.getEmail());
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(user.getEmail());
+
+        return new SignInResponse(newAccessToken, newRefreshToken);
+    }
 }
