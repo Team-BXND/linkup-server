@@ -28,4 +28,13 @@ public class PostsCommentService {
                 .build());
         return APIResponse.ok(MessageResponse.of("답변이 등록되었습니다."));
     }
+
+    public APIResponse<MessageResponse> deleteComment(Long id) {
+        PostsComment comment = postsCommentRepository.findById(id)
+                .orElseThrow(() -> new PostsException(PostsErrorCode.ANSWER_NOT_FOUND));
+
+        postsCommentRepository.delete(comment);
+
+        return APIResponse.ok(MessageResponse.of("답변이 삭제되었습니다."));
+    }
 }

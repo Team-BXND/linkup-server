@@ -72,4 +72,10 @@ public class PostController {
             @RequestBody PostsCommentRequest request) {
         return postsCommentService.createComment(id, request);
     }
+
+    @DeleteMapping("/{id}/answer")
+    public APIResponse<MessageResponse> deleteComment(
+            @PathVariable Long id) {
+        return postsCommentService.deleteComment(id);
+    }
 }
