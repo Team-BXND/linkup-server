@@ -25,7 +25,7 @@ public record ReadPostsResponse(
                 posts.getTitle(),
                 posts.getAuthor(),
                 posts.getCategory(),
-                0,
+                posts.likeCount(),
                 posts.getContent().substring(0,Math.min(20, posts.getContent().length())),
                 posts.isAccepted(),
                 10,

@@ -31,7 +31,7 @@ public class PostsService {
     private final PostsLikeRepository postsLikeRepository;
 
     public APIResponse<PageResponse<List<ReadPostsResponse>>> ReadPosts(int page, ReadPostsRequest req) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createAt"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id"));
         Page<Posts> postsPage;
 
         if (req.category() == null || req.category().toString().equalsIgnoreCase("all")) {
