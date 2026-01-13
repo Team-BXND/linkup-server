@@ -12,6 +12,7 @@ import B1ND.linkUp.global.common.PageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,9 +50,15 @@ public class PostController {
     }
 
     @PatchMapping("/{id}")
-    public APIResponse<?> updatePosts(
+    public APIResponse<MessageResponse> updatePosts(
             @PathVariable Long id,
             @Valid @RequestBody UpdatePostsRequest request) {
         return postsService.updatePosts(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    public APIResponse<MessageResponse> deletePosts(
+            @PathVariable Long id) {
+        return postsService.deletePosts(id);
     }
 }

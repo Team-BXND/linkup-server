@@ -64,12 +64,20 @@ public class PostsService {
         return APIResponse.of(HttpStatus.CREATED, MessageResponse.of("게시글이 등록되었습니다."));
     }
 
-    public APIResponse<?> updatePosts(Long id, UpdatePostsRequest request) {
+    public APIResponse<MessageResponse> updatePosts(Long id, UpdatePostsRequest request) {
         Posts posts = postsRepository.findById(id)
                 .orElseThrow(() -> new PostsException(PostsErrorCode.POST_NOT_FOUND));
 
         posts.updatePosts(request);
         postsRepository.save(posts);
         return APIResponse.ok(MessageResponse.of("게시글이 수정되었습니다."));
+    }
+
+    public APIResponse<MessageResponse> deletePosts(Long id) {
+        Posts posts = postsRepository.findById(id)
+                .orElseThrow(() -> new PostsException(PostsErrorCode.POST_NOT_FOUND));
+
+        postsRepository.delete(posts);
+        return APIResponse.ok(MessageResponse.of("게시글이 삭제되었습니다."));
     }
 }
