@@ -1,11 +1,14 @@
 package B1ND.linkUp.domain.post.controller;
 
 import B1ND.linkUp.domain.post.dto.request.CreatePostsRequest;
+import B1ND.linkUp.domain.post.dto.request.PostsCommentRequest;
 import B1ND.linkUp.domain.post.dto.request.ReadPostsRequest;
 import B1ND.linkUp.domain.post.dto.request.UpdatePostsRequest;
 import B1ND.linkUp.domain.post.dto.response.MessageResponse;
 import B1ND.linkUp.domain.post.dto.response.ReadPostsResponse;
 import B1ND.linkUp.domain.post.dto.response.ViewPostsResponse;
+import B1ND.linkUp.domain.post.entity.PostsComment;
+import B1ND.linkUp.domain.post.service.PostsCommentService;
 import B1ND.linkUp.domain.post.service.PostsService;
 import B1ND.linkUp.global.common.APIResponse;
 import B1ND.linkUp.global.common.PageResponse;
@@ -29,6 +32,7 @@ import java.util.List;
 @RequestMapping("/posts")
 public class PostController {
     private final PostsService postsService;
+    private final PostsCommentService postsCommentService;
 
     @GetMapping
     public APIResponse<PageResponse<List<ReadPostsResponse>>> ReadAll(
@@ -60,5 +64,12 @@ public class PostController {
     public APIResponse<MessageResponse> deletePosts(
             @PathVariable Long id) {
         return postsService.deletePosts(id);
+    }
+
+    @PostMapping("/{id}/answer")
+    public APIResponse<MessageResponse> createPostsComment(
+            @PathVariable Long id,
+            @RequestBody PostsCommentRequest request) {
+        return postsCommentService.createComment(id, request);
     }
 }

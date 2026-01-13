@@ -39,6 +39,9 @@ public class Posts {
     @OneToMany(mappedBy = "posts")
     private List<PostsLike> like;
 
+    @OneToMany(mappedBy = "posts")
+    private List<PostsComment> comments;
+
     public void updatePosts(UpdatePostsRequest request) {
         this.title = request.title();
         this.content = request.content();
