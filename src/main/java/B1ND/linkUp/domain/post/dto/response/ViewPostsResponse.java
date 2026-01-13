@@ -21,7 +21,7 @@ public record ViewPostsResponse(
                 posts.getAuthor(),
                 posts.getCategory(),
                 posts.getContent(),
-                posts.LikeCount(),
+                posts.likeCount(),
                 posts.getCreateAt(),
                 posts.isAccepted(),
                 isLike

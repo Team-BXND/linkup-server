@@ -36,7 +36,7 @@ public class Posts {
     @Builder.Default
     private LocalDate createAt = LocalDate.now();
 
-    @OneToMany
+    @OneToMany(mappedBy = "posts")
     private List<PostsLike> like;
 
     public void updatePosts(UpdatePostsRequest request) {

@@ -31,8 +31,14 @@ public class PostsService {
     private final PostsLikeRepository postsLikeRepository;
 
     public APIResponse<PageResponse<List<ReadPostsResponse>>> ReadPosts(int page, ReadPostsRequest req) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, req.category().toString()));
-        Page<Posts> postsPage = postsRepository.findAllByIsAcceptedTrue(pageable);
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "createAt"));
+        Page<Posts> postsPage;
+
+        if (req.category() == null || req.category().toString().equalsIgnoreCase("all")) {
+            postsPage = postsRepository.findAll(pageable);
+        } else {
+            postsPage = postsRepository.findByCategory(req.category(), pageable);
+        }
 
         return APIResponse.ok(PageResponse.of(ReadPostsResponse.fromPage(postsPage), postsPage));
     }
@@ -41,7 +47,7 @@ public class PostsService {
         Posts posts = postsRepository.findById(id)
                 .orElseThrow(() -> new PostsException(PostsErrorCode.POST_NOT_FOUND));
 
-        boolean isLike = postsLikeRepository.existsByPostsIdAndMemberId(posts.getId(),1L); //memberId같은 경우 머지된 후 추가할 예정
+        boolean isLike = postsLikeRepository.existsByPosts_IdAndMember_Id(posts.getId(),1L); //memberId같은 경우 머지된 후 추가할 예정
 
         return APIResponse.ok(ViewPostsResponse.of(posts, isLike));
     }

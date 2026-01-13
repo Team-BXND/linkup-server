@@ -1,5 +1,6 @@
 package B1ND.linkUp.global.exception;
 
+import B1ND.linkUp.domain.post.exception.PostsException;
 import B1ND.linkUp.global.common.APIResponse;
 import B1ND.linkUp.global.common.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.HashMap;
@@ -19,6 +21,23 @@ import java.util.Map;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private final View error;
+
+    public GlobalExceptionHandler(View error) {
+        this.error = error;
+    }
+
+    @ExceptionHandler(PostsException.class)
+    public ResponseEntity<APIResponse<ErrorResponse>> handlePostsException(PostsException e) {
+        ErrorResponse errorResponse = ErrorResponse.of(
+                e.getPostsErrorCode().getCode(),
+                e.getPostsErrorCode().getMessage()
+        );
+        return ResponseEntity
+                .status(e.getPostsErrorCode().getHttpStatus())
+                .body(APIResponse.error(e.getPostsErrorCode().getHttpStatus(), errorResponse));
+    }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<APIResponse<ErrorResponse>> handleNoResourceFoundException(NoResourceFoundException e) {
