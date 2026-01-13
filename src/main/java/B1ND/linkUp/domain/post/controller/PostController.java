@@ -78,4 +78,11 @@ public class PostController {
             @PathVariable Long id) {
         return postsCommentService.deleteComment(id);
     }
+
+    @PostMapping("/{id}/accept/{ansid}")
+    public APIResponse<MessageResponse> AnswerAcceptanceService(
+            @PathVariable Long id,
+            @PathVariable Long ansid) {
+        return postsCommentService.AnswerAcceptanceService(id, ansid);
+    }
 }

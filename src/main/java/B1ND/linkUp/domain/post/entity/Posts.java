@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,6 +43,10 @@ public class Posts {
     @OneToMany(mappedBy = "posts")
     private List<PostsComment> comments;
 
+    @OneToOne
+    @JoinColumn(name = "accepted_comment_id")
+    private PostsComment postsComment;
+
     public void updatePosts(UpdatePostsRequest request) {
         this.title = request.title();
         this.content = request.content();
@@ -51,5 +56,10 @@ public class Posts {
 
     public int likeCount() {
         return like.size();
+    }
+
+    public void setAccepted(PostsComment comment) {
+        this.postsComment = comment;
+        this.isAccepted = true;
     }
 }
