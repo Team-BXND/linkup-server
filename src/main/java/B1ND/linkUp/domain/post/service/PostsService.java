@@ -2,6 +2,7 @@ package B1ND.linkUp.domain.post.service;
 
 import B1ND.linkUp.domain.post.dto.request.CreatePostsRequest;
 import B1ND.linkUp.domain.post.dto.request.ReadPostsRequest;
+import B1ND.linkUp.domain.post.dto.request.UpdatePostsRequest;
 import B1ND.linkUp.domain.post.dto.response.MessageResponse;
 import B1ND.linkUp.domain.post.dto.response.ReadPostsResponse;
 import B1ND.linkUp.domain.post.dto.response.ViewPostsResponse;
@@ -45,7 +46,7 @@ public class PostsService {
         return APIResponse.ok(ViewPostsResponse.of(posts, isLike));
     }
 
-    public APIResponse<ResponseEntity<MessageResponse>> createPosts(CreatePostsRequest req) {
+    public APIResponse<MessageResponse> createPosts(CreatePostsRequest req) {
         postsRepository.save(
                         Posts.builder()
                         .title(req.title())
@@ -54,8 +55,15 @@ public class PostsService {
                         .category(req.category())
                         .build()
         );
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new MessageResponse("게시글이 작성되었습니다."));
+        return APIResponse.of(HttpStatus.CREATED, MessageResponse.of("게시글이 등록되었습니다."));
+    }
+
+    public APIResponse<?> updatePosts(Long id, UpdatePostsRequest request) {
+        Posts posts = postsRepository.findById(id)
+                .orElseThrow(() -> new PostsException(PostsErrorCode.POST_NOT_FOUND));
+
+        posts.updatePosts(request);
+        postsRepository.save(posts);
+        return APIResponse.ok(MessageResponse.of("게시글이 수정되었습니다."));
     }
 }

@@ -2,6 +2,7 @@ package B1ND.linkUp.domain.post.controller;
 
 import B1ND.linkUp.domain.post.dto.request.CreatePostsRequest;
 import B1ND.linkUp.domain.post.dto.request.ReadPostsRequest;
+import B1ND.linkUp.domain.post.dto.request.UpdatePostsRequest;
 import B1ND.linkUp.domain.post.dto.response.MessageResponse;
 import B1ND.linkUp.domain.post.dto.response.ReadPostsResponse;
 import B1ND.linkUp.domain.post.dto.response.ViewPostsResponse;
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,8 +43,15 @@ public class PostController {
     }
 
     @PostMapping
-    public APIResponse<ResponseEntity<MessageResponse>> createPosts(
+    public APIResponse<MessageResponse> createPosts(
             @Valid @RequestBody CreatePostsRequest request) {
         return postsService.createPosts(request);
+    }
+
+    @PatchMapping("/{id}")
+    public APIResponse<?> updatePosts(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdatePostsRequest request) {
+        return postsService.updatePosts(id, request);
     }
 }
