@@ -4,6 +4,8 @@ import B1ND.linkUp.domain.post.entity.Category;
 import B1ND.linkUp.domain.post.entity.Posts;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public record ViewPostsResponse(
         String title,
@@ -13,7 +15,8 @@ public record ViewPostsResponse(
         int like,
         LocalDate createAt,
         boolean isAccepted,
-        boolean isLike
+        boolean isLike,
+        List<ViewCommentsResponse> comments
 ) {
     public static ViewPostsResponse of(Posts posts, boolean isLike) {
         return new ViewPostsResponse(
@@ -24,7 +27,8 @@ public record ViewPostsResponse(
                 posts.likeCount(),
                 posts.getCreateAt(),
                 posts.isAccepted(),
-                isLike
+                isLike,
+                ViewCommentsResponse.fromList(posts.getComments())
         );
     }
 }
