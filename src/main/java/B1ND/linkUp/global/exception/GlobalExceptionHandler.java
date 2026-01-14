@@ -91,4 +91,19 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(APIResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, errorResponse));
     }
+
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<APIResponse<ErrorResponse>> handleCustomException(CustomException e) {
+        ErrorCode errorCode = e.getErrorCode();
+
+        ErrorResponse errorResponse = ErrorResponse.of(
+                errorCode.name(),
+                errorCode.getMessage()
+        );
+
+        return ResponseEntity
+                .status(errorCode.getStatus())
+                .body(APIResponse.error(errorCode.getStatus(),
+                        errorResponse));
+    }
 }
