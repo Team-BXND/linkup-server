@@ -1,5 +1,6 @@
 package B1ND.linkUp.domain.post.entity;
 
+import B1ND.linkUp.domain.auth.entity.User;
 import B1ND.linkUp.domain.post.dto.request.UpdatePostsRequest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,6 +43,9 @@ public class Posts {
 
     @OneToMany(mappedBy = "posts")
     private List<PostsComment> comments;
+
+    @OneToOne
+    private User user;
 
     @OneToOne
     @JoinColumn(name = "accepted_comment_id")

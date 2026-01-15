@@ -1,6 +1,6 @@
 package B1ND.linkUp.domain.post.entity;
 
-import B1ND.linkUp.domain.member.entity.Member;
+import B1ND.linkUp.domain.auth.entity.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"post_id", "member_id"})
+        @UniqueConstraint(columnNames = {"post_id", "user_id"})
 })
 public class PostsLike {
     @Id
@@ -33,6 +33,6 @@ public class PostsLike {
     private Posts posts;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "user_id")
+    private User user;
 }

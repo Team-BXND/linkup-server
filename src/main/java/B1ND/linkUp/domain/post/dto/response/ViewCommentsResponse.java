@@ -7,11 +7,13 @@ import java.util.stream.Collectors;
 
 public record ViewCommentsResponse(
         Long id,
+        String author,
         String content
 ) {
     public static ViewCommentsResponse of(PostsComment comment) {
         return new ViewCommentsResponse(
                 comment.getId(),
+                comment.getUser().getUsername(),
                 comment.getContent()
         );
     }
