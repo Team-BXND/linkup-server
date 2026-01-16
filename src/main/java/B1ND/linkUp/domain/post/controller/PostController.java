@@ -9,6 +9,7 @@ import B1ND.linkUp.domain.post.dto.response.ReadPostsResponse;
 import B1ND.linkUp.domain.post.dto.response.ViewPostsResponse;
 import B1ND.linkUp.domain.post.entity.PostsComment;
 import B1ND.linkUp.domain.post.service.PostsCommentService;
+import B1ND.linkUp.domain.post.service.PostsLikeService;
 import B1ND.linkUp.domain.post.service.PostsService;
 import B1ND.linkUp.global.common.APIResponse;
 import B1ND.linkUp.global.common.PageResponse;
@@ -33,6 +34,7 @@ import java.util.List;
 public class PostController {
     private final PostsService postsService;
     private final PostsCommentService postsCommentService;
+    private final PostsLikeService postsLikeService;
 
     @GetMapping
     public APIResponse<PageResponse<List<ReadPostsResponse>>> ReadAll(
@@ -84,5 +86,11 @@ public class PostController {
             @PathVariable Long id,
             @PathVariable Long ansid) {
         return postsCommentService.AnswerAcceptanceService(id, ansid);
+    }
+
+    @PostMapping("/{id}/like")
+    public APIResponse<String> toggleLike(
+            @PathVariable Long id) {
+        return postsLikeService.toggleLike(id);
     }
 }

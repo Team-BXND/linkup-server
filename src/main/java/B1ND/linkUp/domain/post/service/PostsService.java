@@ -15,6 +15,7 @@ import B1ND.linkUp.domain.post.repository.PostsRepository;
 import B1ND.linkUp.global.common.APIResponse;
 import B1ND.linkUp.global.common.PageResponse;
 import B1ND.linkUp.global.util.SecurityUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,6 +57,7 @@ public class PostsService {
         return APIResponse.ok(ViewPostsResponse.of(posts, isLike));
     }
 
+    @Transactional
     public APIResponse<MessageResponse> createPosts(CreatePostsRequest req) {
         User user = securityUtil.getUser();
         postsRepository.save(
@@ -70,6 +72,7 @@ public class PostsService {
         return APIResponse.of(HttpStatus.CREATED, MessageResponse.of("게시글이 등록되었습니다."));
     }
 
+    @Transactional
     public APIResponse<MessageResponse> updatePosts(Long id, UpdatePostsRequest request) {
         Posts posts = postsRepository.findById(id)
                 .orElseThrow(() -> new PostsException(PostsErrorCode.POST_NOT_FOUND));
@@ -84,6 +87,7 @@ public class PostsService {
         return APIResponse.ok(MessageResponse.of("게시글이 수정되었습니다."));
     }
 
+    @Transactional
     public APIResponse<MessageResponse> deletePosts(Long id) {
         Posts posts = postsRepository.findById(id)
                 .orElseThrow(() -> new PostsException(PostsErrorCode.POST_NOT_FOUND));

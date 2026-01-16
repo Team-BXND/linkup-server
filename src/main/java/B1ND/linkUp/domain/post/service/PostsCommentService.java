@@ -11,6 +11,7 @@ import B1ND.linkUp.domain.post.repository.PostsCommentRepository;
 import B1ND.linkUp.domain.post.repository.PostsRepository;
 import B1ND.linkUp.global.common.APIResponse;
 import B1ND.linkUp.global.util.SecurityUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.bridge.Message;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,8 @@ public class PostsCommentService {
     private final PostsCommentRepository postsCommentRepository;
     private final SecurityUtil securityUtil;
 
+
+    @Transactional
     public APIResponse<MessageResponse> createComment(Long id, PostsCommentRequest request) {
         Posts posts = postsRepository.findById(id)
                 .orElseThrow(() -> new PostsException(PostsErrorCode.POST_NOT_FOUND));
@@ -36,6 +39,7 @@ public class PostsCommentService {
         return APIResponse.ok(MessageResponse.of("답변이 등록되었습니다."));
     }
 
+    @Transactional
     public APIResponse<MessageResponse> deleteComment(Long id) {
         PostsComment comment = postsCommentRepository.findById(id)
                 .orElseThrow(() -> new PostsException(PostsErrorCode.ANSWER_NOT_FOUND));
@@ -50,6 +54,7 @@ public class PostsCommentService {
         return APIResponse.ok(MessageResponse.of("답변이 삭제되었습니다."));
     }
 
+    @Transactional
     public APIResponse<MessageResponse> AnswerAcceptanceService(Long id, Long answerId) {
         Posts posts = postsRepository.findById(id)
                 .orElseThrow(() -> new PostsException(PostsErrorCode.POST_NOT_FOUND));
