@@ -49,3 +49,13 @@ app:
   auth:
     verification-code:
       digits: ${VERIFICATION_CODE_DIGITS:6}
+
+cloud:
+  aws:
+    s3:
+      bucket: sakjdd
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: ${S3_AccessKey}
+      secretKey: ${S3_SecretKey}
