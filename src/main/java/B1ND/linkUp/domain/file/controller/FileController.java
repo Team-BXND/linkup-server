@@ -1,6 +1,6 @@
 package B1ND.linkUp.domain.file.controller;
 
-import B1ND.linkUp.domain.file.service.FIleService;
+import B1ND.linkUp.domain.file.service.FileService;
 import B1ND.linkUp.global.common.APIResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,10 +13,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @RequestMapping("/upload")
 public class FileController {
-    private final FIleService fIleService;
+    private final FileService fileService;
 
     @PostMapping("/post")
     public APIResponse<?> uploadPostImage(@RequestParam("file") MultipartFile file) {
-        return fIleService.uploadPostImage(file);
+        return fileService.uploadPostImage(file);
     }
 }
