@@ -1,6 +1,8 @@
 package B1ND.linkUp.domain.file.service;
 
 import B1ND.linkUp.domain.file.entity.File;
+import B1ND.linkUp.domain.file.exception.FileErrorCode;
+import B1ND.linkUp.domain.file.exception.FileException;
 import B1ND.linkUp.domain.file.repository.FileRepository;
 import B1ND.linkUp.global.common.APIResponse;
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -33,16 +35,16 @@ public class FileService {
     public APIResponse<?> uploadPostImage(MultipartFile file) {
         try {
             if (file == null || file.isEmpty()) {
-                return APIResponse.error(HttpStatus.BAD_REQUEST, "파일이 없습니다");
+                throw new FileException(FileErrorCode.FILE_EMPTY);
             }
             String filename = file.getOriginalFilename();
             if (filename == null || !filename.contains(".")) {
-                return APIResponse.error(HttpStatus.BAD_REQUEST, "파일명이 유효하지 않습니다");
+                throw new FileException(FileErrorCode.FILE_EMPTY);
             }
 
             String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
             if (!ALLOWED_EXTENSIONS.contains(extension)) {
-                return APIResponse.error(HttpStatus.BAD_REQUEST, "허용되지 않는 파일입니다.");
+                throw new FileException(FileErrorCode.INVALID_FILE_EXTENSION);
             }
 
             String s3Key = "post/" + UUID.randomUUID() + "." + extension;
@@ -62,7 +64,7 @@ public class FileService {
 
             return APIResponse.ok(presignedUrl);
         } catch (Exception e) {
-            return APIResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "업로드 실패");
+            throw new FileException(FileErrorCode.FILE_UPLOAD_FAILED);
         }
     }
     
