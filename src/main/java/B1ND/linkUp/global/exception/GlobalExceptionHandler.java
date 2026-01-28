@@ -1,5 +1,6 @@
 package B1ND.linkUp.global.exception;
 
+import B1ND.linkUp.domain.file.exception.FileException;
 import B1ND.linkUp.domain.post.exception.PostsException;
 import B1ND.linkUp.global.common.APIResponse;
 import B1ND.linkUp.global.common.ErrorResponse;
@@ -26,6 +27,17 @@ public class GlobalExceptionHandler {
 
     public GlobalExceptionHandler(View error) {
         this.error = error;
+    }
+
+    @ExceptionHandler(FileException.class)
+    public ResponseEntity<APIResponse<ErrorResponse>> handleFileException(FileException e) {
+        ErrorResponse errorResponse = ErrorResponse.of(
+                e.getFileErrorCode().getCode(),
+                e.getFileErrorCode().getMessage()
+        );
+        return ResponseEntity
+                .status(e.getFileErrorCode().getHttpStatus())
+                .body(APIResponse.error(e.getFileErrorCode().getHttpStatus(), errorResponse));
     }
 
     @ExceptionHandler(PostsException.class)
