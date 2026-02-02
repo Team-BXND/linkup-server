@@ -67,7 +67,7 @@ public class FileService {
             throw new FileException(FileErrorCode.FILE_UPLOAD_FAILED);
         }
     }
-    
+
     private String generatePresignedUrl(String s3Key) {
         Date expiration = new Date(System.currentTimeMillis() + PRESIGNED_URL_EXPIRATION_MS);
 
