@@ -60,15 +60,13 @@ public class FileService {
                     .url(s3Key)
                     .build());
 
-            String presignedUrl = generatePresignedUrl(s3Key);
-
-            return APIResponse.ok(presignedUrl);
+            return APIResponse.ok(s3Key);
         } catch (Exception e) {
             throw new FileException(FileErrorCode.FILE_UPLOAD_FAILED);
         }
     }
 
-    private String generatePresignedUrl(String s3Key) {
+    public APIResponse<String> generatePresignedUrl(String s3Key) {
         Date expiration = new Date(System.currentTimeMillis() + PRESIGNED_URL_EXPIRATION_MS);
 
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
@@ -76,6 +74,6 @@ public class FileService {
                         .withMethod(com.amazonaws.HttpMethod.GET)
                         .withExpiration(expiration);
 
-        return amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest).toString();
+        return APIResponse.ok(amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest).toString());
     }
 }
