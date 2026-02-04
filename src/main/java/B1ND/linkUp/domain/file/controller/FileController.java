@@ -19,4 +19,9 @@ public class FileController {
     public APIResponse<?> uploadPostImage(@RequestParam("file") MultipartFile file) {
         return fileService.uploadPostImage(file);
     }
+
+    @PostMapping("/profile")
+    public APIResponse<?> uploadProfileImage(@RequestParam("file") MultipartFile file) {
+        return fileService.uploadProfileImage(file);
+    }
 }

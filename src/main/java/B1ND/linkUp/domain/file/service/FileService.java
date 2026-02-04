@@ -27,12 +27,22 @@ public class FileService {
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of("jpg", "jpeg", "png", "webp", "gif");
     private static final long PRESIGNED_URL_EXPIRATION_MINUTES = 10;
     private static final long PRESIGNED_URL_EXPIRATION_MS = PRESIGNED_URL_EXPIRATION_MINUTES * 60 * 1000;
+    private static final String DEFAULT_PROFILE_IMAGE_KEY = "default/기본프사.webp";
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     @Transactional
     public APIResponse<?> uploadPostImage(MultipartFile file) {
+        return uploadImage(file, "post");
+    }
+
+    @Transactional
+    public APIResponse<?> uploadProfileImage(MultipartFile file) {
+        return uploadImage(file, "profile");
+    }
+
+    private APIResponse<?> uploadImage(MultipartFile file, String folder) {
         try {
             if (file == null || file.isEmpty()) {
                 throw new FileException(FileErrorCode.FILE_EMPTY);
@@ -47,7 +57,7 @@ public class FileService {
                 throw new FileException(FileErrorCode.INVALID_FILE_EXTENSION);
             }
 
-            String s3Key = "post/" + UUID.randomUUID() + "." + extension;
+            String s3Key = folder + "/" + UUID.randomUUID() + "." + extension;
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType("image/" + extension);
@@ -66,6 +76,35 @@ public class FileService {
         } catch (Exception e) {
             throw new FileException(FileErrorCode.FILE_UPLOAD_FAILED);
         }
+    }
+
+    @Transactional
+    public void deleteFileFromS3(String s3Key) {
+        try {
+            if (s3Key == null || s3Key.isEmpty()) {
+                return;
+            }
+
+            if (s3Key.equals(DEFAULT_PROFILE_IMAGE_KEY)) {
+                return;
+            }
+
+            amazonS3Client.deleteObject(bucket, s3Key);
+
+            fileRepository.findByUrl(s3Key)
+                    .ifPresent(fileRepository::delete);
+
+        } catch (Exception e) {
+            throw new FileException(FileErrorCode.FILE_DELETE_FAILED);
+        }
+    }
+
+    public String getDefaultProfileImageKey() {
+        return DEFAULT_PROFILE_IMAGE_KEY;
+    }
+
+    public String getDefaultProfileImageUrl() {
+        return generatePresignedUrl(DEFAULT_PROFILE_IMAGE_KEY);
     }
 
     private String generatePresignedUrl(String s3Key) {
