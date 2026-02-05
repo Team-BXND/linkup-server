@@ -11,7 +11,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +23,7 @@ import java.util.UUID;
 public class FileService {
     private final FileRepository fileRepository;
     private final AmazonS3Client amazonS3Client;
+
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of("jpg", "jpeg", "png", "webp", "gif");
     private static final long PRESIGNED_URL_EXPIRATION_MINUTES = 10;
     private static final long PRESIGNED_URL_EXPIRATION_MS = PRESIGNED_URL_EXPIRATION_MINUTES * 60 * 1000;
@@ -44,18 +44,13 @@ public class FileService {
 
     private APIResponse<?> uploadImage(MultipartFile file, String folder) {
         try {
-            if (file == null || file.isEmpty()) {
-                throw new FileException(FileErrorCode.FILE_EMPTY);
-            }
+            if (file == null || file.isEmpty()) throw new FileException(FileErrorCode.FILE_EMPTY);
+
             String filename = file.getOriginalFilename();
-            if (filename == null || !filename.contains(".")) {
-                throw new FileException(FileErrorCode.FILE_EMPTY);
-            }
+            if (filename == null || !filename.contains(".")) throw new FileException(FileErrorCode.FILE_EMPTY);
 
             String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
-            if (!ALLOWED_EXTENSIONS.contains(extension)) {
-                throw new FileException(FileErrorCode.INVALID_FILE_EXTENSION);
-            }
+            if (!ALLOWED_EXTENSIONS.contains(extension)) throw new FileException(FileErrorCode.INVALID_FILE_EXTENSION);
 
             String s3Key = folder + "/" + UUID.randomUUID() + "." + extension;
 
@@ -70,9 +65,7 @@ public class FileService {
                     .url(s3Key)
                     .build());
 
-            String presignedUrl = generatePresignedUrl(s3Key);
-
-            return APIResponse.ok(presignedUrl);
+            return APIResponse.ok(s3Key);
         } catch (Exception e) {
             throw new FileException(FileErrorCode.FILE_UPLOAD_FAILED);
         }
@@ -81,13 +74,8 @@ public class FileService {
     @Transactional
     public void deleteFileFromS3(String s3Key) {
         try {
-            if (s3Key == null || s3Key.isEmpty()) {
-                return;
-            }
-
-            if (s3Key.equals(DEFAULT_PROFILE_IMAGE_KEY)) {
-                return;
-            }
+            if (s3Key == null || s3Key.isEmpty()) return;
+            if (s3Key.equals(DEFAULT_PROFILE_IMAGE_KEY)) return;
 
             amazonS3Client.deleteObject(bucket, s3Key);
 
@@ -104,17 +92,21 @@ public class FileService {
     }
 
     public String getDefaultProfileImageUrl() {
-        return generatePresignedUrl(DEFAULT_PROFILE_IMAGE_KEY);
+        return generatePresignedUrlString(DEFAULT_PROFILE_IMAGE_KEY);
     }
 
-    private String generatePresignedUrl(String s3Key) {
+    public APIResponse<String> generatePresignedUrl(String s3Key) {
+        return APIResponse.ok(generatePresignedUrlString(s3Key));
+    }
+
+    private String generatePresignedUrlString(String s3Key) {
         Date expiration = new Date(System.currentTimeMillis() + PRESIGNED_URL_EXPIRATION_MS);
 
-        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+        GeneratePresignedUrlRequest req =
                 new GeneratePresignedUrlRequest(bucket, s3Key)
                         .withMethod(com.amazonaws.HttpMethod.GET)
                         .withExpiration(expiration);
 
-        return amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest).toString();
+        return amazonS3Client.generatePresignedUrl(req).toString();
     }
 }
