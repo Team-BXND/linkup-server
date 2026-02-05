@@ -183,3 +183,5 @@ gradle-app.setting
 
 ### Environment ###
 .env
+.idea/
+.idea/

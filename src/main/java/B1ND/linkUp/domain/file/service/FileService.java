@@ -11,7 +11,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,30 +23,36 @@ import java.util.UUID;
 public class FileService {
     private final FileRepository fileRepository;
     private final AmazonS3Client amazonS3Client;
+
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of("jpg", "jpeg", "png", "webp", "gif");
     private static final long PRESIGNED_URL_EXPIRATION_MINUTES = 10;
     private static final long PRESIGNED_URL_EXPIRATION_MS = PRESIGNED_URL_EXPIRATION_MINUTES * 60 * 1000;
+    private static final String DEFAULT_PROFILE_IMAGE_KEY = "default/기본프사.webp";
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
     @Transactional
     public APIResponse<?> uploadPostImage(MultipartFile file) {
+        return uploadImage(file, "post");
+    }
+
+    @Transactional
+    public APIResponse<?> uploadProfileImage(MultipartFile file) {
+        return uploadImage(file, "profile");
+    }
+
+    private APIResponse<?> uploadImage(MultipartFile file, String folder) {
         try {
-            if (file == null || file.isEmpty()) {
-                throw new FileException(FileErrorCode.FILE_EMPTY);
-            }
+            if (file == null || file.isEmpty()) throw new FileException(FileErrorCode.FILE_EMPTY);
+
             String filename = file.getOriginalFilename();
-            if (filename == null || !filename.contains(".")) {
-                throw new FileException(FileErrorCode.FILE_EMPTY);
-            }
+            if (filename == null || !filename.contains(".")) throw new FileException(FileErrorCode.FILE_EMPTY);
 
             String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
-            if (!ALLOWED_EXTENSIONS.contains(extension)) {
-                throw new FileException(FileErrorCode.INVALID_FILE_EXTENSION);
-            }
+            if (!ALLOWED_EXTENSIONS.contains(extension)) throw new FileException(FileErrorCode.INVALID_FILE_EXTENSION);
 
-            String s3Key = "post/" + UUID.randomUUID() + "." + extension;
+            String s3Key = folder + "/" + UUID.randomUUID() + "." + extension;
 
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType("image/" + extension);
@@ -66,14 +71,42 @@ public class FileService {
         }
     }
 
+    @Transactional
+    public void deleteFileFromS3(String s3Key) {
+        try {
+            if (s3Key == null || s3Key.isEmpty()) return;
+            if (s3Key.equals(DEFAULT_PROFILE_IMAGE_KEY)) return;
+
+            amazonS3Client.deleteObject(bucket, s3Key);
+
+            fileRepository.findByUrl(s3Key)
+                    .ifPresent(fileRepository::delete);
+
+        } catch (Exception e) {
+            throw new FileException(FileErrorCode.FILE_DELETE_FAILED);
+        }
+    }
+
+    public String getDefaultProfileImageKey() {
+        return DEFAULT_PROFILE_IMAGE_KEY;
+    }
+
+    public String getDefaultProfileImageUrl() {
+        return generatePresignedUrlString(DEFAULT_PROFILE_IMAGE_KEY);
+    }
+
     public APIResponse<String> generatePresignedUrl(String s3Key) {
+        return APIResponse.ok(generatePresignedUrlString(s3Key));
+    }
+
+    private String generatePresignedUrlString(String s3Key) {
         Date expiration = new Date(System.currentTimeMillis() + PRESIGNED_URL_EXPIRATION_MS);
 
-        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+        GeneratePresignedUrlRequest req =
                 new GeneratePresignedUrlRequest(bucket, s3Key)
                         .withMethod(com.amazonaws.HttpMethod.GET)
                         .withExpiration(expiration);
 
-        return APIResponse.ok(amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest).toString());
+        return amazonS3Client.generatePresignedUrl(req).toString();
     }
 }

@@ -4,14 +4,8 @@ import B1ND.linkUp.domain.file.dto.request.S3Request;
 import B1ND.linkUp.domain.file.service.FileService;
 import B1ND.linkUp.global.common.APIResponse;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -23,6 +17,11 @@ public class FileController {
     @PostMapping
     public APIResponse<?> uploadPostImage(@RequestParam("file") MultipartFile file) {
         return fileService.uploadPostImage(file);
+    }
+
+    @PostMapping("/profile")
+    public APIResponse<?> uploadProfileImage(@RequestParam("file") MultipartFile file) {
+        return fileService.uploadProfileImage(file);
     }
 
     @GetMapping

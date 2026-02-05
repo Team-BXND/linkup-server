@@ -4,15 +4,10 @@ import lombok.Getter;
 
 @Getter
 public class FileException extends RuntimeException {
-    private FileErrorCode fileErrorCode;
+    private final FileErrorCode fileErrorCode;
 
     public FileException (FileErrorCode fileErrorCode) {
         super(fileErrorCode.getMessage());
-        this.fileErrorCode = fileErrorCode;
-    }
-
-    public FileException (FileErrorCode fileErrorCode, String messgae) {
-        super(messgae);
         this.fileErrorCode = fileErrorCode;
     }
 }

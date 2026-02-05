@@ -33,7 +33,7 @@ public class PostsService {
     private final PostsLikeRepository postsLikeRepository;
     private final SecurityUtil securityUtil;
 
-    public APIResponse<PageResponse<List<ReadPostsResponse>>> ReadPosts(int page, ReadPostsRequest req) {
+    public APIResponse<PageResponse<ReadPostsResponse>> ReadPosts(int page, ReadPostsRequest req) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id"));
         Page<Posts> postsPage;
 
