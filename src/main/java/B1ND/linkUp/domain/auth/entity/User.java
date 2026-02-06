@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @Entity
 @Table(name = "users")
@@ -46,6 +47,7 @@ public class User {
     }
 
     public void plusPoint() {
-        this.point++;
+        int value = new Random().nextInt(250, 301);
+        this.point += value;
     }
 }
