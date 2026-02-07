@@ -13,7 +13,6 @@ import B1ND.linkUp.global.common.APIResponse;
 import B1ND.linkUp.global.util.SecurityUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.bridge.Message;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -71,6 +70,7 @@ public class PostsCommentService {
                 .orElseThrow(() -> new PostsException(PostsErrorCode.ANSWER_NOT_FOUND));
 
         posts.setAccepted(comment);
+        comment.getUser().plusPoint();
         postsRepository.save(posts);
 
         return APIResponse.ok(MessageResponse.of("답변이 채택되었습니다."));
