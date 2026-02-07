@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
 
     @Query(nativeQuery = true,
-    value = "SELECT u.username AS username, u.point AS point, RANK() OVER (ORDER BY u.point DESC) AS ranking " +
+    value = "SELECT u.username AS username, u.point AS point, DENSE_RANK() OVER (ORDER BY u.point DESC) AS ranking " +
             "FROM `users` u " +
             "ORDER BY u.point DESC " +
             "LIMIT 30")
