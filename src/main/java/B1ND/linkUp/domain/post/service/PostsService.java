@@ -1,6 +1,7 @@
 package B1ND.linkUp.domain.post.service;
 
 import B1ND.linkUp.domain.auth.entity.User;
+import B1ND.linkUp.domain.auth.repository.UserRepository;
 import B1ND.linkUp.domain.post.dto.request.CreatePostsRequest;
 import B1ND.linkUp.domain.post.dto.request.ReadPostsRequest;
 import B1ND.linkUp.domain.post.dto.request.UpdatePostsRequest;
@@ -22,6 +23,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,9 +34,10 @@ import java.util.List;
 public class PostsService {
     private final PostsRepository postsRepository;
     private final PostsLikeRepository postsLikeRepository;
+    private final UserRepository userRepository;
     private final SecurityUtil securityUtil;
 
-    public APIResponse<PageResponse<ReadPostsResponse>> ReadPosts(int page, ReadPostsRequest req) {
+    public PageResponse<ReadPostsResponse> ReadPosts(int page, ReadPostsRequest req) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id"));
         Page<Posts> postsPage;
 
@@ -43,18 +47,22 @@ public class PostsService {
             postsPage = postsRepository.findByCategory(req.category(), pageable);
         }
 
-        return APIResponse.ok(PageResponse.of(ReadPostsResponse.fromPage(postsPage), postsPage));
+        return PageResponse.of(ReadPostsResponse.fromPage(postsPage), postsPage);
     }
 
     public APIResponse<ViewPostsResponse> viewPosts(Long id) {
         Posts posts = postsRepository.findById(id)
                 .orElseThrow(() -> new PostsException(PostsErrorCode.POST_NOT_FOUND));
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        User user = securityUtil.getUser();
+        User user = userRepository.findByEmail(auth.getName())
+                .orElse(null);
 
-        boolean isLike = postsLikeRepository.existsByPosts_IdAndUser(posts.getId(),user);
-
-        return APIResponse.ok(ViewPostsResponse.of(posts, isLike));
+        if (user != null) {
+            boolean isLike = postsLikeRepository.existsByPosts_IdAndUser(posts.getId(),user);
+            return APIResponse.ok(ViewPostsResponse.of(posts, isLike));
+        }
+        return APIResponse.ok(ViewPostsResponse.of(posts, false));
     }
 
     @Transactional

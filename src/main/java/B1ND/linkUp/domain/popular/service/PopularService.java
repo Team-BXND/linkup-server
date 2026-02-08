@@ -20,20 +20,20 @@ import java.time.LocalDateTime;
 public class PopularService {
     private final PostsRepository postsRepository;
 
-    public APIResponse<PageResponse<ReadPostsResponse>> getPopular(int page) {
+    public PageResponse<ReadPostsResponse> getPopular(int page) {
         Pageable pageable = PageRequest.of(page, 10);
         Page<Posts> postsPage = postsRepository.findPopular(pageable);
 
-        return APIResponse.ok(PageResponse.of(ReadPostsResponse.fromPage(postsPage), postsPage));
+        return PageResponse.of(ReadPostsResponse.fromPage(postsPage), postsPage);
     }
 
-    public APIResponse<PageResponse<ReadPostsResponse>> getHotPopular(int page) {
+    public PageResponse<ReadPostsResponse> getHotPopular(int page) {
         Pageable pageable = PageRequest.of(page, 10);
         LocalDateTime monday = getWeekend();
         LocalDateTime sunday = monday.plusDays(6).withHour(23).withMinute(59).withSecond(59);
         Page<Posts> postsPage = postsRepository.findPopularPosts(monday, sunday, pageable);
 
-        return APIResponse.ok(PageResponse.of(ReadPostsResponse.fromPage(postsPage), postsPage));
+        return PageResponse.of(ReadPostsResponse.fromPage(postsPage), postsPage);
     }
 
     private LocalDateTime getWeekend() {

@@ -29,11 +29,11 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
             value = "SELECT p.* " +
                     "FROM posts p " +
                     "LEFT JOIN posts_like pl ON p.id = pl.post_id " +
-                    "WHERE p.createAt BETWEEN :startDate AND :endDate " +
+                    "WHERE p.create_at BETWEEN :startDate AND :endDate " +
                     "GROUP BY p.id " +
                     "ORDER BY COUNT(pl.id) DESC, p.id DESC",
             countQuery = "SELECT COUNT(DISTINCT p.id) FROM posts p " +
-                    "WHERE p.createAt BETWEEN :startDate AND :endDate")
+                    "WHERE p.create_at BETWEEN :startDate AND :endDate")
     Page<Posts> findPopularPosts(@Param("startDate") LocalDateTime startDate,
                                  @Param("endDate") LocalDateTime endDate,
                                  Pageable pageable);

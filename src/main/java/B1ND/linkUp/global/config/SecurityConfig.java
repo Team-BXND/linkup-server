@@ -47,6 +47,9 @@ public class SecurityConfig {
                                     "/auth/pwchange/change",
                                     "/auth/refresh"
                             ).permitAll()
+                            .requestMatchers(HttpMethod.GET,
+                            "/posts/**"
+                            ).permitAll()
                             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                             .anyRequest().authenticated()
                     )
