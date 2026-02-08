@@ -1,6 +1,7 @@
 package B1ND.linkUp.domain.profile.service;
 
 import B1ND.linkUp.domain.auth.entity.User;
+import B1ND.linkUp.domain.auth.repository.UserRepository;
 import B1ND.linkUp.domain.post.entity.Posts;
 import B1ND.linkUp.domain.post.entity.PostsComment;
 import B1ND.linkUp.domain.post.repository.PostsCommentRepository;
@@ -8,6 +9,7 @@ import B1ND.linkUp.domain.post.repository.PostsRepository;
 import B1ND.linkUp.domain.profile.dto.response.MyAnswerItemResponse;
 import B1ND.linkUp.domain.profile.dto.response.MyQuestionItemResponse;
 import B1ND.linkUp.domain.profile.dto.response.ProfileResponse;
+import B1ND.linkUp.domain.ranking.dto.response.GetRankingResponse;
 import B1ND.linkUp.global.common.APIResponse;
 import B1ND.linkUp.global.common.PageResponse;
 import B1ND.linkUp.global.util.SecurityUtil;
@@ -24,12 +26,23 @@ import java.util.List;
 public class ProfileService {
 
     private final SecurityUtil securityUtil;
+    private final UserRepository userRepository;
     private final PostsRepository postsRepository;
     private final PostsCommentRepository postsCommentRepository;
 
     public APIResponse<ProfileResponse> getProfile() {
         User user = securityUtil.getUser();
-        return APIResponse.ok(ProfileResponse.of(user));
+
+        GetRankingResponse my = userRepository.findMyRanking(user.getEmail());
+
+        ProfileResponse response = new ProfileResponse(
+                user.getUsername(),
+                user.getEmail(),
+                user.getPoint(),
+                my.ranking()
+        );
+
+        return APIResponse.ok(response);
     }
 
     public APIResponse<PageResponse<MyQuestionItemResponse>> getMyQuestions(int page) {
