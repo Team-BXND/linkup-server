@@ -45,7 +45,7 @@ public class ProfileService {
         return APIResponse.ok(response);
     }
 
-    public APIResponse<PageResponse<MyQuestionItemResponse>> getMyQuestions(int page) {
+    public PageResponse<MyQuestionItemResponse> getMyQuestions(int page) {
         User user = securityUtil.getUser();
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id"));
 
@@ -57,10 +57,10 @@ public class ProfileService {
                         postId -> (int) postsCommentRepository.countByPosts_Id(postId)
                 );
 
-        return APIResponse.ok(PageResponse.of(items, postsPage));
+        return PageResponse.of(items, postsPage);
     }
 
-    public APIResponse<PageResponse<MyAnswerItemResponse>> getMyAnswers(int page) {
+    public PageResponse<MyAnswerItemResponse> getMyAnswers(int page) {
         User user = securityUtil.getUser();
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id"));
 
@@ -68,6 +68,6 @@ public class ProfileService {
 
         List<MyAnswerItemResponse> items = MyAnswerItemResponse.fromPage(commentPage);
 
-        return APIResponse.ok(PageResponse.of(items, commentPage));
+        return PageResponse.of(items, commentPage);
     }
 }

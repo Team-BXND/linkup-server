@@ -37,7 +37,7 @@ public class PostController {
     private final PostsLikeService postsLikeService;
 
     @GetMapping
-    public APIResponse<PageResponse<ReadPostsResponse>> ReadAll(
+    public PageResponse<ReadPostsResponse> ReadAll(
             @RequestParam(defaultValue = "0") int page,
             @Valid @RequestBody ReadPostsRequest req
     ) {
