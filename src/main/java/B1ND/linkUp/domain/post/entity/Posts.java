@@ -67,4 +67,8 @@ public class Posts {
         this.postsComment = comment;
         this.isAccepted = true;
     }
+
+    public int commentCount() {
+        return comments.size();
+    }
 }
