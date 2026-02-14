@@ -8,6 +8,7 @@ import B1ND.linkUp.domain.post.dto.request.UpdatePostsRequest;
 import B1ND.linkUp.domain.post.dto.response.MessageResponse;
 import B1ND.linkUp.domain.post.dto.response.ReadPostsResponse;
 import B1ND.linkUp.domain.post.dto.response.ViewPostsResponse;
+import B1ND.linkUp.domain.post.entity.Category;
 import B1ND.linkUp.domain.post.entity.Posts;
 import B1ND.linkUp.domain.post.exception.PostsErrorCode;
 import B1ND.linkUp.domain.post.exception.PostsException;
@@ -37,14 +38,14 @@ public class PostsService {
     private final UserRepository userRepository;
     private final SecurityUtil securityUtil;
 
-    public PageResponse<ReadPostsResponse> ReadPosts(int page, ReadPostsRequest req) {
+    public PageResponse<ReadPostsResponse> ReadPosts(int page, Category category) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id"));
         Page<Posts> postsPage;
 
-        if (req.category() == null || req.category().toString().equalsIgnoreCase("all")) {
+        if (category == null || category.toString().equalsIgnoreCase("all")) {
             postsPage = postsRepository.findAll(pageable);
         } else {
-            postsPage = postsRepository.findByCategory(req.category(), pageable);
+            postsPage = postsRepository.findByCategory(category, pageable);
         }
 
         return PageResponse.of(ReadPostsResponse.fromPage(postsPage), postsPage);

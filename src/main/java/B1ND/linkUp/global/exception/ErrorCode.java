@@ -10,11 +10,12 @@ public enum ErrorCode {
 
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH_001", "이메일 또는 비밀번호가 올바르지 않습니다."),
     EMAIL_ALREADY_USED(HttpStatus.CONFLICT, "AUTH_002", "이미 사용 중인 이메일입니다."),
-    INVALID_PASSWORD_FORMAT(HttpStatus.BAD_REQUEST, "AUTH_003", "비밀번호 형식이 올바르지 않습니다."),
-    INVALID_EMAIL(HttpStatus.NOT_FOUND, "AUTH_004", "존재하지 않는 이메일입니다."),
+    USERNAME_ALREADY_USED(HttpStatus.CONFLICT, "AUTH_003", "이미 사용 중인 이메일입니다."),
+    INVALID_PASSWORD_FORMAT(HttpStatus.BAD_REQUEST, "AUTH_004", "비밀번호 형식이 올바르지 않습니다."),
+    INVALID_EMAIL(HttpStatus.NOT_FOUND, "AUTH_005", "존재하지 않는 이메일입니다."),
 
-    INVALID_VERIFICATION_CODE(HttpStatus.BAD_REQUEST, "AUTH_005", "인증번호가 올바르지 않습니다."),
-    EXPIRED_VERIFICATION_CODE(HttpStatus.BAD_REQUEST, "AUTH_006", "인증번호가 만료되었습니다.");
+    INVALID_VERIFICATION_CODE(HttpStatus.BAD_REQUEST, "AUTH_006", "인증번호가 올바르지 않습니다."),
+    EXPIRED_VERIFICATION_CODE(HttpStatus.BAD_REQUEST, "AUTH_007", "인증번호가 만료되었습니다.");
 
     private final HttpStatus status;
     private final String code;
