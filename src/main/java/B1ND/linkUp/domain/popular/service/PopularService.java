@@ -21,14 +21,14 @@ public class PopularService {
     private final PostsRepository postsRepository;
 
     public PageResponse<ReadPostsResponse> getPopular(int page) {
-        Pageable pageable = PageRequest.of(page, 10);
+        Pageable pageable = PageRequest.of(page, 5);
         Page<Posts> postsPage = postsRepository.findPopular(pageable);
 
         return PageResponse.of(ReadPostsResponse.fromPage(postsPage), postsPage);
     }
 
     public PageResponse<ReadPostsResponse> getHotPopular(int page) {
-        Pageable pageable = PageRequest.of(page, 10);
+        Pageable pageable = PageRequest.of(page, 5);
         LocalDateTime monday = getWeekend();
         LocalDateTime sunday = monday.plusDays(6).withHour(23).withMinute(59).withSecond(59);
         Page<Posts> postsPage = postsRepository.findPopularPosts(monday, sunday, pageable);

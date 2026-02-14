@@ -21,8 +21,12 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
                     "FROM posts p " +
                     "LEFT JOIN posts_like pl ON p.id = pl.post_id " +
                     "GROUP BY p.id " +
+                    "HAVING COUNT(pl.id) >= 1 " +
                     "ORDER BY COUNT(pl.id) DESC, p.id DESC",
-            countQuery = "SELECT COUNT(DISTINCT p.id) FROM posts p")
+            countQuery = "SELECT COUNT(DISTINCT p.id) FROM posts p " +
+                    "LEFT JOIN posts_like pl ON p.id = pl.post_id " +
+                    "GROUP BY p.id " +
+                    "HAVING COUNT(pl.id) >= 1")
     Page<Posts> findPopular(Pageable pageable);
 
     @Query(nativeQuery = true,
@@ -31,9 +35,13 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
                     "LEFT JOIN posts_like pl ON p.id = pl.post_id " +
                     "WHERE p.create_at BETWEEN :startDate AND :endDate " +
                     "GROUP BY p.id " +
+                    "HAVING COUNT(pl.id) >= 1 " +
                     "ORDER BY COUNT(pl.id) DESC, p.id DESC",
             countQuery = "SELECT COUNT(DISTINCT p.id) FROM posts p " +
-                    "WHERE p.create_at BETWEEN :startDate AND :endDate")
+                    "LEFT JOIN posts_like pl ON p.id = pl.post_id " +
+                    "WHERE p.create_at BETWEEN :startDate AND :endDate " +
+                    "GROUP BY p.id " +
+                    "HAVING COUNT(pl.id) >= 1")
     Page<Posts> findPopularPosts(@Param("startDate") LocalDateTime startDate,
                                  @Param("endDate") LocalDateTime endDate,
                                  Pageable pageable);

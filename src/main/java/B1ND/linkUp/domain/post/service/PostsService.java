@@ -39,7 +39,7 @@ public class PostsService {
     private final SecurityUtil securityUtil;
 
     public PageResponse<ReadPostsResponse> ReadPosts(int page, Category category) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id"));
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "id"));
         Page<Posts> postsPage;
 
         if (category == null || category.toString().equalsIgnoreCase("all")) {
@@ -61,9 +61,9 @@ public class PostsService {
 
         if (user != null) {
             boolean isLike = postsLikeRepository.existsByPosts_IdAndUser(posts.getId(),user);
-            return APIResponse.ok(ViewPostsResponse.of(posts, isLike));
+            return APIResponse.ok(ViewPostsResponse.of(posts, isLike, user.equals(posts.getUser())));
         }
-        return APIResponse.ok(ViewPostsResponse.of(posts, false));
+        return APIResponse.ok(ViewPostsResponse.of(posts, false, false));
     }
 
     @Transactional

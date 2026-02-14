@@ -67,6 +67,7 @@ public class Posts {
     public void setAccepted(PostsComment comment) {
         this.postsComment = comment;
         this.isAccepted = true;
+        comment.setAccepted();
     }
 
     public int commentCount() {

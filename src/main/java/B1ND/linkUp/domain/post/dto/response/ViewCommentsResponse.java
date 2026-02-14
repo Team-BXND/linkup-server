@@ -2,19 +2,24 @@ package B1ND.linkUp.domain.post.dto.response;
 
 import B1ND.linkUp.domain.post.entity.PostsComment;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public record ViewCommentsResponse(
-        Long id,
+        Long commentId,
         String author,
-        String content
+        String content,
+        boolean isAccepted,
+        LocalDate createdAt
 ) {
     public static ViewCommentsResponse of(PostsComment comment) {
         return new ViewCommentsResponse(
                 comment.getId(),
                 comment.getUser().getUsername(),
-                comment.getContent()
+                comment.getContent(),
+                comment.isAccepted(),
+                comment.getCreateAt()
         );
     }
 

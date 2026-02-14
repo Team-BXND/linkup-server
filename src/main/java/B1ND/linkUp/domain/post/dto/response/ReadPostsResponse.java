@@ -17,7 +17,7 @@ public record ReadPostsResponse(
         String preview,
         boolean isAccepted,
         int commentCount,
-        LocalDate createAt
+        LocalDate createdAt
 ) {
     public static ReadPostsResponse from(Posts posts) {
         return new ReadPostsResponse(

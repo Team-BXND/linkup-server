@@ -40,7 +40,7 @@ public class PostController {
     @GetMapping
     public PageResponse<ReadPostsResponse> ReadAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam Category category
+            @RequestParam(defaultValue = "all") Category category
     ) {
         return postsService.ReadPosts(page, category);
     }
