@@ -2,6 +2,7 @@ package B1ND.linkUp.domain.post.entity;
 
 import B1ND.linkUp.domain.auth.entity.User;
 import B1ND.linkUp.domain.post.dto.request.UpdatePostsRequest;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,10 +40,10 @@ public class Posts {
     @Builder.Default
     private LocalDate createAt = LocalDate.now();
 
-    @OneToMany(mappedBy = "posts")
+    @OneToMany(mappedBy = "posts", cascade = CascadeType.REMOVE)
     private List<PostsLike> like;
 
-    @OneToMany(mappedBy = "posts")
+    @OneToMany(mappedBy = "posts", cascade = CascadeType.REMOVE)
     private List<PostsComment> comments;
 
     @ManyToOne
