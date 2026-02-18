@@ -7,6 +7,7 @@ import B1ND.linkUp.domain.post.dto.request.UpdatePostsRequest;
 import B1ND.linkUp.domain.post.dto.response.MessageResponse;
 import B1ND.linkUp.domain.post.dto.response.ReadPostsResponse;
 import B1ND.linkUp.domain.post.dto.response.ViewPostsResponse;
+import B1ND.linkUp.domain.post.entity.Category;
 import B1ND.linkUp.domain.post.entity.PostsComment;
 import B1ND.linkUp.domain.post.service.PostsCommentService;
 import B1ND.linkUp.domain.post.service.PostsLikeService;
@@ -39,9 +40,9 @@ public class PostController {
     @GetMapping
     public PageResponse<ReadPostsResponse> ReadAll(
             @RequestParam(defaultValue = "0") int page,
-            @Valid @RequestBody ReadPostsRequest req
+            @RequestParam(defaultValue = "all") Category category
     ) {
-        return postsService.ReadPosts(page, req);
+        return postsService.ReadPosts(page, category);
     }
 
     @GetMapping("/{id}")

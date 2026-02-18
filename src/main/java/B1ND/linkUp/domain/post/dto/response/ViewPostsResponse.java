@@ -13,12 +13,13 @@ public record ViewPostsResponse(
         Category category,
         String content,
         int like,
-        LocalDate createAt,
+        LocalDate createdAt,
         boolean isAccepted,
         boolean isLike,
-        List<ViewCommentsResponse> comments
+        boolean isAuthor,
+        List<ViewCommentsResponse> comment
 ) {
-    public static ViewPostsResponse of(Posts posts, boolean isLike) {
+    public static ViewPostsResponse of(Posts posts, boolean isLike, boolean isAuthor) {
         return new ViewPostsResponse(
                 posts.getTitle(),
                 posts.getAuthor(),
@@ -28,6 +29,7 @@ public record ViewPostsResponse(
                 posts.getCreateAt(),
                 posts.isAccepted(),
                 isLike,
+                isAuthor,
                 ViewCommentsResponse.fromList(posts.getComments())
         );
     }

@@ -16,8 +16,8 @@ public record ReadPostsResponse(
         int like,
         String preview,
         boolean isAccepted,
-        int CommentCount,
-        LocalDate createAt
+        int commentCount,
+        LocalDate createdAt
 ) {
     public static ReadPostsResponse from(Posts posts) {
         return new ReadPostsResponse(
@@ -28,7 +28,7 @@ public record ReadPostsResponse(
                 posts.likeCount(),
                 posts.getContent().substring(0,Math.min(20, posts.getContent().length())),
                 posts.isAccepted(),
-                10,
+                posts.commentCount(),
                 posts.getCreateAt()
         );
     }
