@@ -10,7 +10,7 @@ public enum ErrorCode {
 
     INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "AUTH_001", "이메일 또는 비밀번호가 올바르지 않습니다."),
     EMAIL_ALREADY_USED(HttpStatus.CONFLICT, "AUTH_002", "이미 사용 중인 이메일입니다."),
-    USERNAME_ALREADY_USED(HttpStatus.CONFLICT, "AUTH_003", "이미 사용 중인 이메일입니다."),
+    USERNAME_ALREADY_USED(HttpStatus.CONFLICT, "AUTH_003", "이미 사용 중인 닉네임입니다."),
     INVALID_PASSWORD_FORMAT(HttpStatus.BAD_REQUEST, "AUTH_004", "비밀번호 형식이 올바르지 않습니다."),
     INVALID_EMAIL(HttpStatus.NOT_FOUND, "AUTH_005", "존재하지 않는 이메일입니다."),
 
