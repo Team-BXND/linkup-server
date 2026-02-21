@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: linkup-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - linkup-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  spring-boot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: linkup-app
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8080
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ACCESS_VALID_MS: ${JWT_ACCESS_VALID_MS}
+      JWT_REFRESH_VALID_MS: ${JWT_REFRESH_VALID_MS}
+      S3_AccessKey: ${S3_AccessKey}
+      S3_SecretKey: ${S3_SecretKey}
+    ports:
+      - "8080:8080"
+    networks:
+      - linkup-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  redis_data:
+
+networks:
+  linkup-network:
+    driver: bridge
