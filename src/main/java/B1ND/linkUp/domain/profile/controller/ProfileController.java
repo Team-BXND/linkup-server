@@ -22,14 +22,14 @@ public class ProfileController {
     }
 
     @GetMapping("/myque")
-    public APIResponse<ProfilePageResponse<MyQuestionItemResponse>> myQuestions(
+    public ProfilePageResponse<MyQuestionItemResponse> myQuestions(
             @RequestParam(name = "page", defaultValue = "0") int page
     ) {
         return profileService.getMyQuestions(page);
     }
 
     @GetMapping("/myans")
-    public APIResponse<ProfilePageResponse<MyAnswerItemResponse>> myAnswers(
+    public ProfilePageResponse<MyAnswerItemResponse> myAnswers(
             @RequestParam(name = "page", defaultValue = "0") int page
     ) {
         return profileService.getMyAnswers(page);

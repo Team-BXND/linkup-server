@@ -47,7 +47,7 @@ public class ProfileService {
         return APIResponse.ok(response);
     }
 
-    public APIResponse<ProfilePageResponse<MyQuestionItemResponse>> getMyQuestions(int page) {
+    public ProfilePageResponse<MyQuestionItemResponse> getMyQuestions(int page) {
         User user = securityUtil.getUser();
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id"));
 
@@ -57,18 +57,21 @@ public class ProfileService {
                 .map(p -> {
                     Long postId = p.getId();
 
-                    int commentCount = (int) postsCommentRepository.countByPosts_Id(postId);
-                    int like = (int) postsLikeRepository.countByPosts_Id(postId);
+                    long commentCount = postsCommentRepository.countByPosts_Id(postId);
+                    long likeCount = postsLikeRepository.countByPosts_Id(postId);
                     boolean isAccepted = p.isAccepted();
 
-                    return MyQuestionItemResponse.of(p, like, commentCount, isAccepted, page);
+                    int commentCountInt = Math.toIntExact(commentCount);
+                    int likeCountInt = Math.toIntExact(likeCount);
+
+                    return MyQuestionItemResponse.of(p, likeCountInt, commentCountInt, isAccepted, page);
                 })
                 .toList();
 
-        return APIResponse.ok(ProfilePageResponse.of(items, postsPage));
+        return ProfilePageResponse.of(items, postsPage);
     }
 
-    public APIResponse<ProfilePageResponse<MyAnswerItemResponse>> getMyAnswers(int page) {
+    public ProfilePageResponse<MyAnswerItemResponse> getMyAnswers(int page) {
         User user = securityUtil.getUser();
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id"));
 
@@ -76,6 +79,6 @@ public class ProfileService {
 
         List<MyAnswerItemResponse> items = MyAnswerItemResponse.fromPage(commentPage);
 
-        return APIResponse.ok(ProfilePageResponse.of(items, commentPage));
+        return ProfilePageResponse.of(items, commentPage);
     }
 }
