@@ -27,4 +27,6 @@ public interface UserRepository extends JpaRepository<User, String> {
                     "FROM `users` u " +
                     "WHERE u.email = :email")
     GetRankingResponse findMyRanking(@Param("email") String email);
+
+    boolean existsByUsername(String username);
 }

@@ -1,12 +1,14 @@
 package B1ND.linkUp.domain.post.service;
 
 import B1ND.linkUp.domain.auth.entity.User;
+import B1ND.linkUp.domain.auth.repository.UserRepository;
 import B1ND.linkUp.domain.post.dto.request.CreatePostsRequest;
 import B1ND.linkUp.domain.post.dto.request.ReadPostsRequest;
 import B1ND.linkUp.domain.post.dto.request.UpdatePostsRequest;
 import B1ND.linkUp.domain.post.dto.response.MessageResponse;
 import B1ND.linkUp.domain.post.dto.response.ReadPostsResponse;
 import B1ND.linkUp.domain.post.dto.response.ViewPostsResponse;
+import B1ND.linkUp.domain.post.entity.Category;
 import B1ND.linkUp.domain.post.entity.Posts;
 import B1ND.linkUp.domain.post.exception.PostsErrorCode;
 import B1ND.linkUp.domain.post.exception.PostsException;
@@ -22,6 +24,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,30 +35,35 @@ import java.util.List;
 public class PostsService {
     private final PostsRepository postsRepository;
     private final PostsLikeRepository postsLikeRepository;
+    private final UserRepository userRepository;
     private final SecurityUtil securityUtil;
 
-    public APIResponse<PageResponse<ReadPostsResponse>> ReadPosts(int page, ReadPostsRequest req) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "id"));
+    public PageResponse<ReadPostsResponse> ReadPosts(int page, Category category) {
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "id"));
         Page<Posts> postsPage;
 
-        if (req.category() == null || req.category().toString().equalsIgnoreCase("all")) {
+        if (category == null || category.toString().equalsIgnoreCase("all")) {
             postsPage = postsRepository.findAll(pageable);
         } else {
-            postsPage = postsRepository.findByCategory(req.category(), pageable);
+            postsPage = postsRepository.findByCategory(category, pageable);
         }
 
-        return APIResponse.ok(PageResponse.of(ReadPostsResponse.fromPage(postsPage), postsPage));
+        return PageResponse.of(ReadPostsResponse.fromPage(postsPage), postsPage);
     }
 
     public APIResponse<ViewPostsResponse> viewPosts(Long id) {
         Posts posts = postsRepository.findById(id)
                 .orElseThrow(() -> new PostsException(PostsErrorCode.POST_NOT_FOUND));
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        User user = securityUtil.getUser();
+        User user = userRepository.findByEmail(auth.getName())
+                .orElse(null);
 
-        boolean isLike = postsLikeRepository.existsByPosts_IdAndUser(posts.getId(),user);
-
-        return APIResponse.ok(ViewPostsResponse.of(posts, isLike));
+        if (user != null) {
+            boolean isLike = postsLikeRepository.existsByPosts_IdAndUser(posts.getId(),user);
+            return APIResponse.ok(ViewPostsResponse.of(posts, isLike, user.equals(posts.getUser())));
+        }
+        return APIResponse.ok(ViewPostsResponse.of(posts, false, false));
     }
 
     @Transactional

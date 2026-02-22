@@ -17,13 +17,13 @@ public class PopularController {
     private final PopularService popularService;
 
     @GetMapping
-    public APIResponse<PageResponse<ReadPostsResponse>> getPopular(
+    public PageResponse<ReadPostsResponse> getPopular(
             @RequestParam(defaultValue = "0") int page) {
         return popularService.getPopular(page);
     }
 
     @GetMapping("/hot")
-    public APIResponse<PageResponse<ReadPostsResponse>> getHotPopular(
+    public PageResponse<ReadPostsResponse> getHotPopular(
             @RequestParam(defaultValue = "0") int page) {
         return popularService.getHotPopular(page);
     }

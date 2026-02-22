@@ -26,6 +26,9 @@ public class PostsLikeService {
 
         Posts posts = postsRepository.findById(id)
                 .orElseThrow(() -> new PostsException(PostsErrorCode.POST_NOT_FOUND));
+        if (user.equals(posts.getUser())) {
+            throw new PostsException(PostsErrorCode.CANNOT_LIKE_OWN_POST);
+        }
 
         return postsLikeRepository.findByPosts_IdAndUser(id, user)
                 .map(existingLike -> {

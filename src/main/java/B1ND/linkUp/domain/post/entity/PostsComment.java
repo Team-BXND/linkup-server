@@ -14,6 +14,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -34,4 +36,14 @@ public class PostsComment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Builder.Default
+    private LocalDate createAt = LocalDate.now();
+
+    @Builder.Default
+    private boolean isAccepted = false;
+
+    public void setAccepted() {
+        this.isAccepted = true;
+    }
 }

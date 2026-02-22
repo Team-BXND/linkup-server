@@ -2,19 +2,11 @@ package B1ND.linkUp.domain.post.entity;
 
 import B1ND.linkUp.domain.auth.entity.User;
 import B1ND.linkUp.domain.post.dto.request.UpdatePostsRequest;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.sql.Update;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,6 +22,7 @@ public class Posts {
     private Long id;
 
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String content;
     private String author;
     private Category category;
@@ -39,10 +32,10 @@ public class Posts {
     @Builder.Default
     private LocalDate createAt = LocalDate.now();
 
-    @OneToMany(mappedBy = "posts")
+    @OneToMany(mappedBy = "posts", cascade = CascadeType.REMOVE)
     private List<PostsLike> like;
 
-    @OneToMany(mappedBy = "posts")
+    @OneToMany(mappedBy = "posts", cascade = CascadeType.REMOVE)
     private List<PostsComment> comments;
 
     @ManyToOne
@@ -66,5 +59,10 @@ public class Posts {
     public void setAccepted(PostsComment comment) {
         this.postsComment = comment;
         this.isAccepted = true;
+        comment.setAccepted();
+    }
+
+    public int commentCount() {
+        return comments.size();
     }
 }
