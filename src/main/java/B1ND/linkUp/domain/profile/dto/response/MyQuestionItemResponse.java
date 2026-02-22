@@ -1,32 +1,36 @@
 package B1ND.linkUp.domain.profile.dto.response;
 
-import B1ND.linkUp.domain.post.entity.Category;
 import B1ND.linkUp.domain.post.entity.Posts;
-import org.springframework.data.domain.Page;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Locale;
 
 public record MyQuestionItemResponse(
         Long id,
         String title,
         String preview,
-        Category category,
-        int commentCount
+        String category,
+        int like,
+        int commentCount,
+        boolean isAccepted,
+        int page
 ) {
-    public static MyQuestionItemResponse of(Posts posts, int commentCount) {
+    public static MyQuestionItemResponse of(Posts posts,
+                                            int like,
+                                            int commentCount,
+                                            boolean isAccepted,
+                                            int page) {
+        String preview = posts.getContent().substring(0, Math.min(20, posts.getContent().length()));
+        String category = posts.getCategory().name().toLowerCase(Locale.ROOT);
+
         return new MyQuestionItemResponse(
                 posts.getId(),
                 posts.getTitle(),
-                posts.getContent().substring(0, Math.min(20, posts.getContent().length())),
-                posts.getCategory(),
-                commentCount
+                preview,
+                category,
+                like,
+                commentCount,
+                isAccepted,
+                page
         );
-    }
-
-    public static List<MyQuestionItemResponse> fromPage(Page<Posts> page, java.util.function.ToIntFunction<Long> commentCountFn) {
-        return page.getContent().stream()
-                .map(p -> MyQuestionItemResponse.of(p, commentCountFn.applyAsInt(p.getId())))
-                .collect(Collectors.toList());
     }
 }
