@@ -52,7 +52,8 @@ public class SecurityConfig {
                                     "/posts/{id}",
                                     "/popular",
                                     "/popular/hot",
-                                    "/ranking"
+                                    "/ranking",
+                                    "/upload"
                             ).permitAll()
                             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                             .anyRequest().authenticated()

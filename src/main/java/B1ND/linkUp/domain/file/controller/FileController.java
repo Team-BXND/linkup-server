@@ -25,7 +25,7 @@ public class FileController {
     }
 
     @GetMapping
-    public APIResponse<String> generatePresignedUrl(@Valid @RequestBody S3Request request) {
-        return fileService.generatePresignedUrl(request.s3key());
+    public APIResponse<String> generatePresignedUrl(@RequestParam String s3Key) {
+        return fileService.generatePresignedUrl(s3Key);
     }
 }
