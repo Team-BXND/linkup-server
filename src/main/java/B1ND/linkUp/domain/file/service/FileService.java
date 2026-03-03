@@ -42,15 +42,21 @@ public class FileService {
         return uploadImage(file, "profile");
     }
 
+    private String validateImageFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) throw new FileException(FileErrorCode.FILE_EMPTY);
+
+        String filename = file.getOriginalFilename();
+        if (filename == null || !filename.contains(".")) throw new FileException(FileErrorCode.FILE_EMPTY);
+
+        String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+        if (!ALLOWED_EXTENSIONS.contains(extension)) throw new FileException(FileErrorCode.INVALID_FILE_EXTENSION);
+
+        return extension;
+    }
+
     private APIResponse<?> uploadImage(MultipartFile file, String folder) {
         try {
-            if (file == null || file.isEmpty()) throw new FileException(FileErrorCode.FILE_EMPTY);
-
-            String filename = file.getOriginalFilename();
-            if (filename == null || !filename.contains(".")) throw new FileException(FileErrorCode.FILE_EMPTY);
-
-            String extension = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
-            if (!ALLOWED_EXTENSIONS.contains(extension)) throw new FileException(FileErrorCode.INVALID_FILE_EXTENSION);
+            String extension = validateImageFile(file);
 
             String s3Key = folder + "/" + UUID.randomUUID() + "." + extension;
 
@@ -61,7 +67,7 @@ public class FileService {
             amazonS3Client.putObject(bucket, s3Key, file.getInputStream(), metadata);
 
             fileRepository.save(File.builder()
-                    .name(filename)
+                    .name(file.getOriginalFilename())
                     .url(s3Key)
                     .build());
 
