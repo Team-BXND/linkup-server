@@ -23,9 +23,12 @@ public interface UserRepository extends JpaRepository<User, String> {
     List<GetRankingResponse> findAllByRanking();
 
     @Query(nativeQuery = true,
-            value = "SELECT u.username AS username, u.point AS point, DENSE_RANK() OVER (ORDER BY u.point DESC) AS ranking " +
-                    "FROM `users` u " +
-                    "WHERE u.email = :email")
+            value = "SELECT ranked.username, ranked.point, ranked.ranking FROM (" +
+                    "SELECT u.username AS username, u.point AS point, u.email AS email, " +
+                    "DENSE_RANK() OVER (ORDER BY u.point DESC) AS ranking " +
+                    "FROM `users` u" +
+                    ") ranked " +
+                    "WHERE ranked.email = :email")
     GetRankingResponse findMyRanking(@Param("email") String email);
 
     boolean existsByUsername(String username);
